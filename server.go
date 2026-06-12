@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -16,6 +17,7 @@ var upgrader = websocket.Upgrader{
 type Message struct {
 	Username string `json:"username"`
 	Message  string `json:"message"`
+	Time     string `json:"time"`
 }
 
 var clients = make(map[*websocket.Conn]bool)
@@ -43,6 +45,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			delete(clients, conn)
 			return
 		}
+		msg.Time = time.Now().Format("15:04:05")
 		broadcast <- msg
 	}
 }
