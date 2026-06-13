@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -45,7 +48,18 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			delete(clients, conn)
 			return
 		}
+
 		msg.Time = time.Now().Format("15:04:05")
+		file, err := os.OpenFile(
+			"msg.json",
+			os.O_APPEND|os.O_CREATE|os.O_WRONLY,
+			0644,
+		)
+		encoder := json.NewEncoder(file)
+		defer file.Close()
+		if err := encoder.Encode(msg); err != nil {
+			log.Fatal(err)
+		}
 		broadcast <- msg
 	}
 }
@@ -63,6 +77,7 @@ func handleMessages() {
 	}
 }
 func main() {
+
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", handleConnections)
 
