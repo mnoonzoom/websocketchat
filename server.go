@@ -16,6 +16,15 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
+var messages []Message
+
+func loadHistory() {
+	file, err := os.ReadFile("msghistory.json")
+	if err != nil {
+		return
+	}
+	json.Unmarshal(file, &messages)
+}
 
 type Message struct {
 	Username string `json:"username"`
@@ -41,6 +50,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	clients[conn] = true
 
 	for {
+
 		var msg Message
 		err := conn.ReadJSON(&msg)
 		if err != nil {
@@ -50,15 +60,18 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		}
 
 		msg.Time = time.Now().Format("15:04:05")
-		file, err := os.OpenFile(
-			"msg.json",
-			os.O_APPEND|os.O_CREATE|os.O_WRONLY,
-			0644,
-		)
-		encoder := json.NewEncoder(file)
+		messages = append(messages, msg)
+
+		file, err := os.Create("msghistory.json")
+		if err != nil {
+			log.Println(err)
+			return
+		}
 		defer file.Close()
-		if err := encoder.Encode(msg); err != nil {
-			log.Fatal(err)
+
+		encoder := json.NewEncoder(file)
+		if err := encoder.Encode(messages); err != nil {
+			log.Println(err)
 		}
 		broadcast <- msg
 	}
@@ -77,10 +90,10 @@ func handleMessages() {
 	}
 }
 func main() {
-
+	loadHistory()
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", handleConnections)
-
+	http.Handle("/msghistory.json", http.FileServer(http.Dir(".")))
 	go handleMessages()
 
 	fmt.Println("Server starts on :8080")

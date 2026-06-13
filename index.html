@@ -13,6 +13,22 @@
     <ul id="messages"></ul>
 
     <script>
+        fetch("/msghistory.json")
+    .then(r => r.json())
+    .then(messages => {
+        if (!Array.isArray(messages)) {
+            console.error("Not array:", messages);
+            return;
+        }
+
+        messages.forEach(msg => {
+            const li = document.createElement("li");
+            li.textContent = msg.time + " " + msg.username + ": " + msg.message;
+            document.getElementById("messages").appendChild(li);
+        });
+    })
+    .catch(err => console.error("history error:", err));
+
         const socket = new WebSocket("ws://localhost:8080/ws");
 
         socket.onmessage = function(event) {
