@@ -6,7 +6,8 @@
 <body>
     <input id="username" placeholder="Username">
     <br><br>
-
+<input id="password" placeholder="Password">
+    <br><br>
     <input id="message" placeholder="Message">
     <button onclick="sendMessage()">Send</button>
 
@@ -42,8 +43,11 @@
 
         function sendMessage() {
             const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
             const message = document.getElementById("message").value;
             const time = Date.now()
+            if (password==="name")
+        {
             socket.send(JSON.stringify({
                 username: username,
                 message: message,
@@ -51,6 +55,10 @@
 
             document.getElementById("message").value = "";
         }
+        else{
+            alert("Wrong password")
+        }
+    }
     </script>
 </body>
 </html>
