@@ -1,0 +1,14 @@
+ul {
+    list-style: none;
+    padding-left: 0; 
+}
+
+li:before {
+    content: "";
+    display: inline-block;
+    width: 20px; 
+    height: 20px; 
+    background-image: url('icon.png'); 
+    background-size: contain; 
+    margin-right: 10px; 
+}

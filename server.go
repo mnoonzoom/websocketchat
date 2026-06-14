@@ -94,6 +94,8 @@ func main() {
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", handleConnections)
 	http.Handle("/msghistory.json", http.FileServer(http.Dir(".")))
+	http.Handle("/style.css", http.FileServer(http.Dir(".")))
+	http.Handle("/icon.png", http.FileServer(http.Dir(".")))
 	go handleMessages()
 
 	fmt.Println("Server starts on :8080")
