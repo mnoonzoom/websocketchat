@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
+var client *mongo.Client
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -34,6 +35,10 @@ type Message struct {
 	Username string `json:"username"`
 	Message  string `json:"message"`
 	Time     string `json:"time"`
+}
+type LoginRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
 }
 
 var clients = make(map[*websocket.Conn]bool)
@@ -95,6 +100,52 @@ func handleMessages() {
 		}
 	}
 }
+func auth(user string, password string) bool {
+
+	coll := client.Database("chat").Collection("auth")
+
+	var result bson.M
+	err := coll.FindOne(context.TODO(), bson.D{
+		{"user", user},
+	}).Decode(&result)
+
+	if err == mongo.ErrNoDocuments {
+		fmt.Printf("User not found: %s\n", user)
+		return false
+	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	dbPassword, ok := result["password"].(string)
+	if !ok {
+		fmt.Println("Password field missing or invalid")
+		return false
+	}
+
+	if dbPassword != password {
+		fmt.Println("Wrong password")
+		return false
+	}
+
+	fmt.Println("Login success:", user)
+	return true
+}
+func loginHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	var req LoginRequest
+	json.NewDecoder(r.Body).Decode(&req)
+	ok := auth(req.Username, req.Password)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]bool{
+		"success": ok,
+	})
+}
 func main() {
 	loadHistory()
 	fmt.Println(os.Getenv("MONGODB_URI"))
@@ -105,7 +156,8 @@ func main() {
 			"See: " + docs +
 			"usage-examples/#environment-variable")
 	}
-	client, err := mongo.Connect(options.Client().
+	var err error
+	client, err = mongo.Connect(options.Client().
 		ApplyURI(uri))
 	if err != nil {
 		panic(err)
@@ -115,26 +167,8 @@ func main() {
 			panic(err)
 		}
 	}()
-	coll := client.Database("chat").Collection("auth")
-	user := "Danik"
-	var result bson.M
-	err = coll.FindOne(context.TODO(), bson.D{{"user", user}}).
-		Decode(&result)
-	if err == mongo.ErrNoDocuments {
-		fmt.Printf("No document was found with the title %s\n", user)
-		return
-	}
-	if err != nil {
-		panic(err)
-	}
-	jsonData, err := json.MarshalIndent(result, "", "    ")
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("%s\n", jsonData)
-
 	http.HandleFunc("/ws", handleConnections)
-
+	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "auth.html")
 	})

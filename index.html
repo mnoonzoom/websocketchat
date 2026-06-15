@@ -15,7 +15,7 @@
     <ul id="messages"></ul>
 <link rel="stylesheet" href="style.css">
     <script>
-        fetch("/msghistory.json")
+        fetch("/static/msghistory.json")
     .then(r => r.json())
     .then(messages => {
         if (!Array.isArray(messages)) {

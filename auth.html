@@ -15,17 +15,31 @@
 
 <link rel="stylesheet" href="style.css">
 <script>
-    function Auth(){
-        console.log("clicked")
-        const Username=document.getElementById("username").value;
-        const Password=document.getElementById("password").value;
-       if (Username=="Danik" && Password=="123"){
-  window.location.href = "/chat";
-}
-        else{
-            alert("Wrong credentials")
-        }
+async function Auth(){
+
+
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    const res = await fetch("/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username,
+            password
+        })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+        window.location.href = "/chat";
+    } else {
+        alert("Wrong credentials");
     }
+}
 </script>
 </body>
 </html>
