@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat</title>
+</head>
+<body>
+    <center>
+    <input id="username" placeholder="Username">
+    <br><br>
+<input id="password" placeholder="Password">
+
+    <br><br>
+    <button onclick="Auth()">Log in</button>
+    </center>
+
+<link rel="stylesheet" href="style.css">
+<script>
+    function Auth(){
+        console.log("clicked")
+        const Username=document.getElementById("username").value;
+        const Password=document.getElementById("password").value;
+       if (Username=="Danik" && Password=="123"){
+  window.location.href = "/chat";
+}
+        else{
+            alert("Wrong credentials")
+        }
+    }
+</script>
+</body>
+</html>

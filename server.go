@@ -38,7 +38,9 @@ var broadcast = make(chan Message)
 func homePage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
-
+func loginPage(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "auth.html")
+}
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -91,11 +93,18 @@ func handleMessages() {
 }
 func main() {
 	loadHistory()
-	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", handleConnections)
-	http.Handle("/msghistory.json", http.FileServer(http.Dir(".")))
-	http.Handle("/style.css", http.FileServer(http.Dir(".")))
-	http.Handle("/icon.png", http.FileServer(http.Dir(".")))
+
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "auth.html")
+	})
+
+	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "index.html")
+	})
+
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("."))))
+
 	go handleMessages()
 
 	fmt.Println("Server starts on :8080")
