@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -9,6 +10,9 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"go.mongodb.org/mongo-driver/v2/bson"
+	"go.mongodb.org/mongo-driver/v2/mongo"
+	"go.mongodb.org/mongo-driver/v2/mongo/options"
 )
 
 var upgrader = websocket.Upgrader{
@@ -93,6 +97,42 @@ func handleMessages() {
 }
 func main() {
 	loadHistory()
+	fmt.Println(os.Getenv("MONGODB_URI"))
+	uri := os.Getenv("MONGODB_URI")
+	docs := "www.mongodb.com/docs/drivers/go/current/"
+	if uri == "" {
+		log.Fatal("Set your 'MONGODB_URI' environment variable. " +
+			"See: " + docs +
+			"usage-examples/#environment-variable")
+	}
+	client, err := mongo.Connect(options.Client().
+		ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err := client.Disconnect(context.TODO()); err != nil {
+			panic(err)
+		}
+	}()
+	coll := client.Database("chat").Collection("auth")
+	user := "Danik"
+	var result bson.M
+	err = coll.FindOne(context.TODO(), bson.D{{"user", user}}).
+		Decode(&result)
+	if err == mongo.ErrNoDocuments {
+		fmt.Printf("No document was found with the title %s\n", user)
+		return
+	}
+	if err != nil {
+		panic(err)
+	}
+	jsonData, err := json.MarshalIndent(result, "", "    ")
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("%s\n", jsonData)
+
 	http.HandleFunc("/ws", handleConnections)
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -108,7 +148,7 @@ func main() {
 	go handleMessages()
 
 	fmt.Println("Server starts on :8080")
-	err := http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":8080", nil)
 
 	if err != nil {
 		panic("error starting server: " + err.Error())
