@@ -108,10 +108,11 @@ func auth(user string, password string) bool {
 
 	var result bson.M
 	err := coll.FindOne(context.TODO(), bson.D{
-		{"user", user},
+		{"username", user},
 	}).Decode(&result)
 
 	if err == mongo.ErrNoDocuments {
+
 		fmt.Printf("User not found: %s\n", user)
 		return false
 	}
