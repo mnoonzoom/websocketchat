@@ -8,7 +8,7 @@ li:before {
     display: inline-block;
     width: 20px; 
     height: 20px; 
-    background-image: url('icon.png'); 
+background-image: url('/static/icon.png');
     background-size: contain; 
     margin-right: 10px; 
 }
