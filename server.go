@@ -10,6 +10,8 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
+	"github.com/sbowman/dotenv"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
@@ -132,6 +134,24 @@ func auth(user string, password string) bool {
 	fmt.Println("Login success:", user)
 	return true
 }
+func register(user string, password string) bool {
+
+	coll := client.Database("chat").Collection("auth")
+
+	user1 := LoginRequest{Username: user, Password: password}
+	result, err := coll.InsertOne(context.TODO(), user1)
+
+	if err == mongo.ErrNoDocuments {
+		fmt.Printf("User not found: %s\n", user)
+		return false
+	}
+	fmt.Printf("Inserted document with _id: %v\n", result.InsertedID)
+	if err != nil {
+		panic(err)
+	}
+
+	return true
+}
 func loginHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -146,10 +166,28 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		"success": ok,
 	})
 }
+func registerHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+	var req LoginRequest
+	json.NewDecoder(r.Body).Decode(&req)
+	ok := register(req.Username, req.Password)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]bool{
+		"success": ok,
+	})
+}
 func main() {
 	loadHistory()
+	err2 := godotenv.Load(".env")
+	if err2 != nil {
+		log.Fatalf("Error loading .env file: %s", err2)
+	}
 	fmt.Println(os.Getenv("MONGODB_URI"))
-	uri := os.Getenv("MONGODB_URI")
+	uri := dotenv.GetString("MONGODB_URI")
 	docs := "www.mongodb.com/docs/drivers/go/current/"
 	if uri == "" {
 		log.Fatal("Set your 'MONGODB_URI' environment variable. " +
@@ -169,6 +207,7 @@ func main() {
 	}()
 	http.HandleFunc("/ws", handleConnections)
 	http.HandleFunc("/login", loginHandler)
+	http.HandleFunc("/register", registerHandler)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "auth.html")
 	})

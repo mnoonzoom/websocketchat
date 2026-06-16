@@ -11,6 +11,9 @@
 
     <br><br>
     <button onclick="Auth()">Log in</button>
+    <br><br>
+    <button onclick="Register()">Register</button>
+
     </center>
 
 <link rel="stylesheet" href="style.css">
@@ -39,6 +42,17 @@ async function Auth(){
     } else {
         alert("Wrong credentials");
     }
+}
+async function Register() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    
+    const res = await fetch("/register", {
+        method: "POST",
+        headers:{
+            "Content-Type": "application/json"
+        }
+    })
 }
 </script>
 </body>
