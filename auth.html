@@ -10,59 +10,13 @@
 <input id="password" placeholder="Password">
 
     <br><br>
-    <button onclick="Auth()">Log in</button>
+    <button id="login">Log in</button>
     <br><br>
-    <button onclick="Register()">Register</button>
+    <button id="register">Register</button>
 
     </center>
 <link rel="stylesheet" href="/static/style.css">
-<script>
-async function Auth(){
+<script src="/static/auth.js"></script>
 
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
-    const res = await fetch("/login", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username,
-            password
-        })
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-        window.location.href = "/chat";
-    } else {
-        alert("Wrong credentials");
-    }
-}
-async function Register() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    
-    const res = await fetch("/register", {
-        method: "POST",
-        headers:{
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            username,
-            password
-        })
-    })
-    const data = await res.json();
-    if (data.success){
-        alert("Registration success")
-    } else {
-        alert("Registration fail");
-    }
-}
-</script>
 </body>
 </html>

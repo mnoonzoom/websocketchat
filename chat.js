@@ -1,0 +1,44 @@
+  let socket=new WebSocket("ws://localhost:8080/ws");
+  document.addEventListener("DOMContentLoaded", (event) => {
+     fetch("/static/msghistory.json")
+    .then(r => r.json())
+    .then(messages => {
+        if (!Array.isArray(messages)) {
+            console.error("Not array:", messages);
+            return;
+        }
+
+        messages.forEach(msg => {
+            const li = document.createElement("li");
+            li.textContent = msg.time + " " + msg.username + ": " + msg.message;
+            document.getElementById("messages").appendChild(li);
+        });
+    })
+    .catch(err => console.error("history error:", err));
+
+      
+
+        socket.onmessage = function(event) {
+            const msg = JSON.parse(event.data);
+
+            const li = document.createElement("li");
+            li.textContent = msg.time+" "+msg.username + ": " + msg.message;
+
+            document.getElementById("messages").appendChild(li);
+        };
+         document.getElementById("send").addEventListener("click", sendMessage) 
+  });
+ 
+ function sendMessage() {
+            const username = document.getElementById("username").value;
+            const message = document.getElementById("message").value;
+            const time = Date.now()
+      
+            socket.send(JSON.stringify({
+                username: username,
+                message: message,
+            }));
+
+            document.getElementById("message").value = "";
+   }
+   

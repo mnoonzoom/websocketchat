@@ -10,52 +10,10 @@
 
 
     <input id="message" placeholder="Message">
-    <button onclick="sendMessage()">Send</button>
+    <button id="send">Send</button>
     </center>
     <ul id="messages"></ul>
 <link rel="stylesheet" href="/static/style.css">
-    <script>
-        fetch("/static/msghistory.json")
-    .then(r => r.json())
-    .then(messages => {
-        if (!Array.isArray(messages)) {
-            console.error("Not array:", messages);
-            return;
-        }
-
-        messages.forEach(msg => {
-            const li = document.createElement("li");
-            li.textContent = msg.time + " " + msg.username + ": " + msg.message;
-            document.getElementById("messages").appendChild(li);
-        });
-    })
-    .catch(err => console.error("history error:", err));
-
-        const socket = new WebSocket("ws://localhost:8080/ws");
-
-        socket.onmessage = function(event) {
-            const msg = JSON.parse(event.data);
-
-            const li = document.createElement("li");
-            li.textContent = msg.time+" "+msg.username + ": " + msg.message;
-
-            document.getElementById("messages").appendChild(li);
-        };
-
-        function sendMessage() {
-            const username = document.getElementById("username").value;
-            const message = document.getElementById("message").value;
-            const time = Date.now()
-       
-            socket.send(JSON.stringify({
-                username: username,
-                message: message,
-            }));
-
-            document.getElementById("message").value = "";
-        
-   
-    }
-    </script>
+   <script src="/static/chat.js"></script>
 </body>
 </html>
