@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.mongodb.org/mongo-driver/v2/mongo"
 	"go.mongodb.org/mongo-driver/v2/mongo/options"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var client *mongo.Client
@@ -51,6 +52,10 @@ func homePage(w http.ResponseWriter, r *http.Request) {
 }
 func loginPage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "auth.html")
+}
+func checkPassword(hashedPassword, password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	return err == nil
 }
 func handleConnections(w http.ResponseWriter, r *http.Request) {
 	conn, err := upgrader.Upgrade(w, r, nil)
@@ -127,7 +132,7 @@ func auth(user string, password string) bool {
 		return false
 	}
 
-	if dbPassword != password {
+	if checkPassword(dbPassword, password) != true {
 		fmt.Println("Wrong password")
 		return false
 	}
@@ -138,8 +143,12 @@ func auth(user string, password string) bool {
 func register(user string, password string) bool {
 
 	coll := client.Database("chat").Collection("auth")
+	hashedpass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	user1 := LoginRequest{Username: user, Password: password}
+	user1 := LoginRequest{Username: user, Password: string(hashedpass)}
 	result, err := coll.InsertOne(context.TODO(), user1)
 
 	if err == mongo.ErrNoDocuments {
