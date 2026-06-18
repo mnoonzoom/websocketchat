@@ -16,15 +16,25 @@ background-image: url('/static/icon.png');
 .login-container{
     margin-top: 5%;
     margin-bottom: 5%;
-    align-content: center;
+    justify-content: center; 
 }
 .login-form{
-    padding: 5%;
+    padding: 20px;
+      width: 400px;
+      align-items: center;
     box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+}
+
+.login-form input {
+    width: 50%; 
 }
 .login-form h3{
     text-align: center;
     color: #333;
+}
+.form-group {
+    display: flex;
+    justify-content: center;
 }
 .btnSubmit
 {
