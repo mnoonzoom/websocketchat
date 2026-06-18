@@ -47,15 +47,4 @@ async function Register() {
  document.getElementById("login").addEventListener("click", Auth);
  document.getElementById("register").addEventListener("click", Register) 
 
-   function sendMessage() {
-            const username = document.getElementById("username").value;
-            const message = document.getElementById("message").value;
-            const time = Date.now()
-       
-            socket.send(JSON.stringify({
-                username: username,
-                message: message,
-            }));
-
-            document.getElementById("message").value = "";
-   }
+ 
