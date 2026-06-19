@@ -19,6 +19,7 @@ async function Auth(){
 
     if (data.success) {
         window.location.href = "/chat";
+        localStorage.setItem("username", username);
     } else {
         alert("Wrong credentials");
     }

@@ -1,4 +1,6 @@
-  let socket=new WebSocket("ws://localhost:8080/ws");
+const username = localStorage.getItem("username");
+
+let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
   document.addEventListener("DOMContentLoaded", (event) => {
      fetch("/static/msghistory.json")
     .then(r => r.json())
@@ -32,12 +34,14 @@
  function sendMessage() {
             const username = document.getElementById("username").value;
             const message = document.getElementById("message").value;
+            const recipient = document.getElementById("recipient").value;
             const time = Date.now()
       
-            socket.send(JSON.stringify({
-                username: username,
-                message: message,
-            }));
+         socket.send(JSON.stringify({
+    username: username,
+    recipient: recipient,
+    message: message
+}));
 
             document.getElementById("message").value = "";
    }

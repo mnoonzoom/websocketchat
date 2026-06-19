@@ -35,16 +35,17 @@ func loadHistory() {
 }
 
 type Message struct {
-	Username string `json:"username"`
-	Message  string `json:"message"`
-	Time     string `json:"time"`
+	Username  string `json:"username"`
+	Recipient string `json:"recipient"`
+	Message   string `json:"message"`
+	Time      string `json:"time"`
 }
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
 
-var clients = make(map[*websocket.Conn]bool)
+var clients = make(map[string]*websocket.Conn)
 var broadcast = make(chan Message)
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +59,8 @@ func checkPassword(hashedPassword, password string) bool {
 	return err == nil
 }
 func handleConnections(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Query().Get("username")
+
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -65,7 +68,7 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 	defer conn.Close()
 
-	clients[conn] = true
+	clients[username] = conn
 
 	for {
 
@@ -73,10 +76,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		err := conn.ReadJSON(&msg)
 		if err != nil {
 			fmt.Println(err)
-			delete(clients, conn)
+			delete(clients, username)
 			return
 		}
-
+		msg.Username = username
 		msg.Time = time.Now().Format("15:04:05")
 		messages = append(messages, msg)
 
@@ -91,18 +94,30 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 		if err := encoder.Encode(messages); err != nil {
 			log.Println(err)
 		}
-		broadcast <- msg
+
+		if msg.Recipient == "" {
+			broadcast <- msg
+		} else {
+			if recipientConn, ok := clients[msg.Recipient]; ok {
+				recipientConn.WriteJSON(msg)
+			}
+
+			if senderConn, ok := clients[msg.Username]; ok {
+				senderConn.WriteJSON(msg)
+			}
+		}
 	}
 }
 func handleMessages() {
 	for {
 		msg := <-broadcast
-		for client := range clients {
-			err := client.WriteJSON(msg)
+
+		for username, conn := range clients {
+			err := conn.WriteJSON(msg)
 			if err != nil {
 				fmt.Println(err)
-				client.Close()
-				delete(clients, client)
+				conn.Close()
+				delete(clients, username)
 			}
 		}
 	}
