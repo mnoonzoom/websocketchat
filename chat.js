@@ -2,21 +2,19 @@ const username = localStorage.getItem("username");
 
 let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
   document.addEventListener("DOMContentLoaded", (event) => {
-     fetch("/static/msghistory.json")
-    .then(r => r.json())
-    .then(messages => {
-        if (!Array.isArray(messages)) {
-            console.error("Not array:", messages);
-            return;
-        }
+    fetch("/messages?username=" + localStorage.getItem("username"))
+  .then(r => r.json())
+  .then(messages => {
+      messages.forEach(msg => {
+          const li = document.createElement("li");
+          li.textContent =
+              `${msg.time} ${msg.username}` +
+              (msg.recipient ? ` → ${msg.recipient}` : "") +
+              `: ${msg.message}`;
 
-        messages.forEach(msg => {
-            const li = document.createElement("li");
-            li.textContent = msg.time + " " + msg.username + ": " + msg.message;
-            document.getElementById("messages").appendChild(li);
-        });
-    })
-    .catch(err => console.error("history error:", err));
+          document.getElementById("messages").appendChild(li);
+      });
+  });
 
       
 

@@ -24,21 +24,15 @@ var upgrader = websocket.Upgrader{
 		return true
 	},
 }
-var messages []Message
 
-func loadHistory() {
-	file, err := os.ReadFile("msghistory.json")
-	if err != nil {
-		return
-	}
-	json.Unmarshal(file, &messages)
-}
+var messagesColl *mongo.Collection
 
 type Message struct {
-	Username  string `json:"username"`
-	Recipient string `json:"recipient"`
-	Message   string `json:"message"`
-	Time      string `json:"time"`
+	ID        bson.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username  string        `json:"username"`
+	Recipient string        `json:"recipient"`
+	Message   string        `json:"message"`
+	Time      time.Time     `bson:"time" json:"time"`
 }
 type LoginRequest struct {
 	Username string `json:"username"`
@@ -80,19 +74,10 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		msg.Username = username
-		msg.Time = time.Now().Format("15:04:05")
-		messages = append(messages, msg)
-
-		file, err := os.Create("msghistory.json")
+		msg.Time = time.Now()
+		_, err = messagesColl.InsertOne(context.TODO(), msg)
 		if err != nil {
-			log.Println(err)
-			return
-		}
-		defer file.Close()
-
-		encoder := json.NewEncoder(file)
-		if err := encoder.Encode(messages); err != nil {
-			log.Println(err)
+			log.Printf("Mongo insert error: %v", err)
 		}
 
 		if msg.Recipient == "" {
@@ -107,6 +92,29 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 	}
+}
+func getMessages(w http.ResponseWriter, r *http.Request) {
+	username := r.URL.Query().Get("username")
+
+	filter := bson.M{
+		"$or": []bson.M{
+			{"recipient": ""},
+			{"username": username},
+			{"recipient": username},
+		},
+	}
+	cursor, err := messagesColl.Find(context.TODO(), filter)
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
+	defer cursor.Close(context.TODO())
+
+	var msgs []Message
+	cursor.All(context.TODO(), &msgs)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(msgs)
 }
 func handleMessages() {
 	for {
@@ -206,7 +214,7 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 	})
 }
 func main() {
-	loadHistory()
+
 	err2 := godotenv.Load(".env")
 	if err2 != nil {
 		log.Fatalf("Error loading .env file: %s", err2)
@@ -225,6 +233,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	messagesColl = client.Database("chat").Collection("messages")
 	defer func() {
 		if err := client.Disconnect(context.TODO()); err != nil {
 			panic(err)
@@ -240,7 +249,7 @@ func main() {
 	http.HandleFunc("/chat", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "index.html")
 	})
-
+	http.HandleFunc("/messages", getMessages)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("."))))
 
 	go handleMessages()
