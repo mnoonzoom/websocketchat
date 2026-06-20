@@ -15,7 +15,15 @@ let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
           document.getElementById("messages").appendChild(li);
       });
   });
-
+  fetch("/users")
+  .then(r => r.json())
+  .then(users => {
+    users.forEach(user =>{
+        const li = document.createElement("li");
+        li.textContent=user;
+        document.getElementById("users").appendChild(li)
+    })
+  })
       
 
         socket.onmessage = function(event) {

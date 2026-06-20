@@ -4,15 +4,21 @@
     <title>Chat</title>
 </head>
 <body>
-    <center>
-    <div class="userList"> <ul id="users"></ul> </div>
-    <input id="username" placeholder="Username">
-    <br><br>
-    <input id="recipient" placeholder="Recipient (empty = all)">
- <br><br>
-    <input id="message" placeholder="Message">
-    <button id="send">Send</button>
-    </center>
+   
+<div class="container">
+       <div class="chat">
+        <input id="username" placeholder="Username">
+        <br><br>
+        <input id="recipient" placeholder="Recipient (empty = all)">
+        <br><br>
+        <input id="message" placeholder="Message">
+        <button id="send">Send</button>
+    </div>
+
+     <div class="userList">
+        <ul id="users"></ul>
+    </div>
+</div>
     <ul id="messages"></ul>
 <link rel="stylesheet" href="/static/style.css">
    <script src="/static/chat.js"></script>

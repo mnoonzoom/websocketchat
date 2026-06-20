@@ -53,3 +53,19 @@ background-image: url('/static/icon.png');
 .login-container form{
     padding: 10%;
 }
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+}
+
+.chat {
+    flex: 1;
+}
+
+.userList {
+    width: 200px;
+    border-left: 1px solid #ccc;
+    padding-left: 20px;
+}
