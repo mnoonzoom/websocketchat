@@ -12,7 +12,9 @@ background-image: url('/static/icon.png');
     background-size: contain; 
     margin-right: 10px; 
 }
-
+#users{
+    background-image: url('/static/user.jpg');
+}
 .login-container{
     margin-top: 5%;
     margin-bottom: 5%;
@@ -68,4 +70,22 @@ background-image: url('/static/icon.png');
     width: 200px;
     border-left: 1px solid #ccc;
     padding-left: 20px;
+}
+#users li {
+    padding-left: 30px;
+    position: relative;
+}
+
+#users li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 2px;
+
+    width: 20px;
+    height: 20px;
+
+    background-image: url('/static/user.jpg');
+    background-size: contain;
+    background-repeat: no-repeat;
 }
