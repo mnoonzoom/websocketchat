@@ -27,6 +27,9 @@ var upgrader = websocket.Upgrader{
 
 var messagesColl *mongo.Collection
 
+type User struct {
+	Username string `bson:"username" json:"username"`
+}
 type Message struct {
 	ID        bson.ObjectID `bson:"_id,omitempty" json:"id"`
 	Username  string        `json:"username"`
@@ -213,6 +216,35 @@ func registerHandler(w http.ResponseWriter, r *http.Request) {
 		"success": ok,
 	})
 }
+func getUsers(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	coll := client.Database("chat").Collection("auth")
+
+	cursor, err := coll.Find(context.TODO(), bson.D{})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	defer cursor.Close(context.TODO())
+
+	var dbUsers []User
+	if err := cursor.All(context.TODO(), &dbUsers); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var users []string
+	for _, u := range dbUsers {
+		users = append(users, u.Username)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
+}
 func main() {
 
 	err2 := godotenv.Load(".env")
@@ -242,6 +274,7 @@ func main() {
 	http.HandleFunc("/ws", handleConnections)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/register", registerHandler)
+	http.HandleFunc("/users", getUsers)
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, "auth.html")
 	})
