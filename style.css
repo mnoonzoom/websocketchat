@@ -66,26 +66,32 @@ background-image: url('/static/icon.png');
     flex: 1;
 }
 
-.userList {
-    width: 200px;
-    border-left: 1px solid #ccc;
-    padding-left: 20px;
-}
 #users li {
-    padding-left: 30px;
     position: relative;
+    cursor: pointer;
+
+    padding: 5px 5px 5px 30px; /* верх право низ лево */
 }
 
 #users li::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 2px;
+    left: 5px;
+    top: 50%;
+    transform: translateY(-50%);
 
-    width: 20px;
-    height: 20px;
+    width: 16px;
+    height: 16px;
 
     background-image: url('/static/user.jpg');
     background-size: contain;
     background-repeat: no-repeat;
+}
+
+#users li:hover {
+    background: #eee;
+}
+
+#users li.selected {
+    background: lightblue;
 }

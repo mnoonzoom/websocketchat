@@ -21,6 +21,15 @@ let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
     users.forEach(user =>{
         const li = document.createElement("li");
         li.textContent=user;
+       li.onclick = () => {
+    document.getElementById("recipient").value = user;
+
+    document.querySelectorAll("#users li").forEach(el => {
+        el.classList.remove("selected");
+    });
+
+    li.classList.add("selected");
+};
         document.getElementById("users").appendChild(li)
     })
   })
