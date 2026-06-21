@@ -35,14 +35,18 @@ let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
   })
       
 
-        socket.onmessage = function(event) {
-            const msg = JSON.parse(event.data);
+       socket.onmessage = function(event) {
+    const msg = JSON.parse(event.data);
 
-            const li = document.createElement("li");
-            li.textContent = msg.time+" "+msg.username + ": " + msg.message;
+    const li = document.createElement("li");
 
-            document.getElementById("messages").appendChild(li);
-        };
+  li.textContent =
+    `${msg.time} ${msg.username}` +
+    (msg.recipient ? ` → ${msg.recipient}` : " → all") +
+    `: ${msg.message}`;
+
+    document.getElementById("messages").appendChild(li);
+};
          document.getElementById("send").addEventListener("click", sendMessage) 
   });
  
