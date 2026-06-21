@@ -55,12 +55,7 @@ background-image: url('/static/icon.png');
 .login-container form{
     padding: 10%;
 }
-.container {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 20px;
-}
+
 
 .chat {
     flex: 1;
@@ -94,4 +89,9 @@ background-image: url('/static/icon.png');
 
 #users li.selected {
     background: lightblue;
+}
+.chat-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
 }
