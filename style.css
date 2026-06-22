@@ -2,10 +2,7 @@ html, body {
     height: 100%;
     margin: 0;
 }
-body {
-    display: flex;
-    flex-direction: column;
-}
+
 ul {
     list-style: none;
     padding-left: 0; 
@@ -99,7 +96,6 @@ background-image: url('/static/icon.png');
     background: lightblue;
 }
 .chat-container {
-    display: flex;
     gap: 20px;
     align-items: flex-start;
         height: 100vh;
@@ -107,4 +103,18 @@ background-image: url('/static/icon.png');
 #messages {
     display: flex;
     flex-direction: column;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-container {
+    flex: 1;
+
 }
