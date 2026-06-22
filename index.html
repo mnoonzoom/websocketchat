@@ -5,23 +5,38 @@
 </head>
 <body>
    
-<div class="container chat-container">
-       <div class="chat">
-        <input id="username" placeholder="Username">
-        <br><br>
-        <input id="recipient" placeholder="Recipient (empty = all)">
-        <br><br>
-        <input id="message" placeholder="Message">
-        <button id="send">Send</button>
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+        <span class="navbar-brand">Chat App</span>
     </div>
+</nav>
 
-     <div class="userList">
-       <ul id="users">
-</ul>
+<div class="container-fluid chat-container">
+    <div class="row h-100">
+
+        <div class="col-md-3 border-end p-3">
+            <ul id="users" class="list-group"></ul>
+        </div>
+
+        <div class="col-md-9 d-flex flex-column">
+
+            <div id="messages" class="flex-grow-1 p-3 overflow-auto"></div>
+
+            <div class="p-3 border-top">
+                <div class="input-group">
+                    <input id="message" type="text" class="form-control" placeholder="Type message...">
+                    <button id="send" class="btn btn-primary">Send</button>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
-    <ul id="messages"></ul>
 <link rel="stylesheet" href="/static/style.css">
    <script src="/static/chat.js"></script>
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+         <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </body>
 </html>
