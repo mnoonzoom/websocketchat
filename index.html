@@ -14,17 +14,20 @@
 <div class="container-fluid chat-container">
     <div class="row h-100">
 
-        <div class="col-md-3 border-end p-3">
+        <div class="col-md-3 border-end p-3 h-100 overflow-auto">
             <ul id="users" class="list-group"></ul>
         </div>
 
-        <div class="col-md-9 d-flex flex-column">
+        <div class="col-md-9 d-flex flex-column h-100">
 
-            <div id="messages" class="flex-grow-1 p-3 overflow-auto"></div>
+            <div id="messages"
+                 class="flex-grow-1 p-3 overflow-auto"
+                 style="background: #f8f9fa;">
+            </div>
 
             <div class="p-3 border-top">
                 <div class="input-group">
-                    <input id="message" type="text" class="form-control" placeholder="Type message...">
+                    <input id="message" class="form-control">
                     <button id="send" class="btn btn-primary">Send</button>
                 </div>
             </div>
