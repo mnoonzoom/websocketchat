@@ -70,7 +70,7 @@ background-image: url('/static/icon.png');
     position: relative;
     cursor: pointer;
 
-    padding: 5px 5px 5px 30px; /* верх право низ лево */
+    padding: 5px 5px 5px 30px; 
 }
 
 #users li::before {
@@ -99,22 +99,9 @@ background-image: url('/static/icon.png');
     gap: 20px;
     align-items: flex-start;
         height: 100vh;
+     flex: 1;
 }
 #messages {
     display: flex;
     flex-direction: column;
-}
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-}
-
-.chat-container {
-    flex: 1;
-
 }
