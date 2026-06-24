@@ -45,6 +45,13 @@ async function Register() {
         alert("Registration fail");
     }
 }
+function darkmode(){
+    var element = document.body;
+    var element1 = document.getElementById("container-fluid")
+    element.classList.toggle("dark-mode")
+    element1.classList.toggle("dark-mode")
+}
+document.getElementById("themes").addEventListener("click", darkmode)
  document.getElementById("login").addEventListener("click", Auth);
  document.getElementById("register").addEventListener("click", Register) 
 
