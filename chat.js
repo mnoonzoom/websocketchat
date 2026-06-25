@@ -55,7 +55,6 @@ function loadMessages() {
             });
         });
 }
-
 function loadUsers() {
     fetch("/users")
         .then(r => r.json())
@@ -63,12 +62,22 @@ function loadUsers() {
             const list = document.getElementById("users");
             list.innerHTML = "";
 
-
             const all = document.createElement("li");
-            all.className = "list-group-item active";
+            all.className = "list-group-item";
+
+            if (currentChat === "all") {
+                all.classList.add("selected");
+            }
+
             all.textContent = "All";
 
             all.onclick = () => {
+                document.querySelectorAll("#users li").forEach(item => {
+                    item.classList.remove("selected");
+                });
+
+                all.classList.add("selected");
+
                 currentChat = "all";
                 loadMessages();
             };
@@ -82,7 +91,17 @@ function loadUsers() {
                 li.className = "list-group-item";
                 li.textContent = u;
 
+                if (currentChat === u) {
+                    li.classList.add("selected");
+                }
+
                 li.onclick = () => {
+                    document.querySelectorAll("#users li").forEach(item => {
+                        item.classList.remove("selected");
+                    });
+
+                    li.classList.add("selected");
+
                     currentChat = u;
                     loadMessages();
                 };

@@ -121,7 +121,15 @@ background-image: url('/static/icon.png');
 }
 
 
+#users li.selected {
+    background-color: #b6d4fe;
+    color: black;
+}
 
+.dark-mode #users li.selected {
+    background-color: #2563EB;
+    color: white;
+}
 .dark-mode #users li {
     background-color: #0F172A;
     color: #F8FAFC;
@@ -193,4 +201,30 @@ background-image: url('/static/icon.png');
 }
 #messages {
     padding: 15px;
+}
+.dark-mode #message {
+    background-color: #334155;
+    color: #F8FAFC;
+    border-color: #475569;
+}
+
+.dark-mode #message::placeholder {
+    color: #94A3B8;
+}
+
+.dark-mode #message:focus {
+    background-color: #334155;
+    color: #F8FAFC;
+    border-color: #2563EB;
+    box-shadow: none;
+}
+
+.dark-mode #send {
+    background-color: #2563EB;
+    border-color: #2563EB;
+}
+
+.dark-mode #send:hover {
+    background-color: #1D4ED8;
+    border-color: #1D4ED8;
 }
