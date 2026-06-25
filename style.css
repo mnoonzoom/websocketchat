@@ -57,14 +57,23 @@ background-image: url('/static/icon.png');
 }
 .login-form .btnSubmit{
     font-weight: 600;
-    color: #fff;
+    color: #F8FAFC;
     background-color: #0062cc;
+}
+.dark-mode .login-form .btnSubmit {
+    background-color: #3A82FF;
+    color: #F8FAFC
 }
 .login-container form{
     padding: 10%;
 }
 
-
+.dark-mode #username{
+    background-color: #8895A7;
+}
+.dark-mode #password{
+      background-color: #8895A7;
+}
 .chat {
     flex: 1;
 }
@@ -109,6 +118,13 @@ background-image: url('/static/icon.png');
     flex-direction: column;
 }
 .dark-mode{
-    background-color: black;
-    color: white
+    background-color: #0C1120;
+    color: #F8FAFC;
+    
+}
+.dark-mode .login-form h3 {
+    color: #F8FAFC;
+}
+.login-form.dark-mode h3 {
+    color: #F8FAFC;
 }

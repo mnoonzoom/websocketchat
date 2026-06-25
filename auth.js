@@ -46,13 +46,24 @@ async function Register() {
     }
 }
 function darkmode(){
-    var element = document.body;
-    var element1 = document.getElementById("container-fluid")
-    element.classList.toggle("dark-mode")
-    element1.classList.toggle("dark-mode")
+    var element1 = document.getElementById("navbar")
+    var element2 =document.getElementById("body")
+  var element3 = document.getElementById("login-form");
+  var element4 =document.getElementById("login")
+  var element5 =document.getElementById('register')
+    element2.classList.toggle("bg-light")
+    element2.classList.toggle("dark-mode")
+    element1.classList.toggle("bg-light");
+    element1.classList.toggle("dark-mode");
+    element1.classList.toggle("navbar-light")
+    element1.classList.toggle("navbar-dark")
+    element4.classList.toggle("darkmode")
+    element5.classList.toggle('darkmode')
+
 }
 document.getElementById("themes").addEventListener("click", darkmode)
  document.getElementById("login").addEventListener("click", Auth);
  document.getElementById("register").addEventListener("click", Register) 
+ 
 
  
