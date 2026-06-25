@@ -59,6 +59,13 @@ function darkmode(){
     element1.classList.toggle("navbar-dark")
     element4.classList.toggle("darkmode")
     element5.classList.toggle('darkmode')
+      const icon = document.querySelector("#themes i");
+
+        if (document.body.classList.contains("dark-mode")) {
+        icon.className = "bi bi-sun-fill";
+    } else {
+        icon.className = "bi bi-moon-fill";
+    }
 
 }
 document.getElementById("themes").addEventListener("click", darkmode)

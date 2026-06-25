@@ -120,10 +120,11 @@ socket.onmessage = (event) => {
 };
 
 function darkmode(){
+    
     var element1 = document.getElementById("navbar")
     var element2 =document.getElementById("body")
   var element4 =document.getElementById("chat")
-  var element5 =document.getElementById('register')
+
     element2.classList.toggle("bg-light")
     element2.classList.toggle("dark-mode")
     element1.classList.toggle("bg-light");
@@ -131,7 +132,17 @@ function darkmode(){
     element1.classList.toggle("navbar-light")
     element1.classList.toggle("navbar-dark")
     element4.classList.toggle("darkmode")
-    element5.classList.toggle('darkmode')
+
+      const icon = document.querySelector("#themes i");
+
+if (element2.classList.contains("dark-mode")) {
+    icon.classList.remove("bi-moon-fill");
+    icon.classList.add("bi-sun-fill");
+} else {
+    icon.classList.remove("bi-sun-fill");
+    icon.classList.add("bi-moon-fill");
+}
+
 
 }
 document.getElementById("themes").addEventListener("click", darkmode)

@@ -228,3 +228,15 @@ background-image: url('/static/icon.png');
     background-color: #1D4ED8;
     border-color: #1D4ED8;
 }
+.theme-btn {
+    border: none;
+    background: transparent;
+    font-size: 24px;
+    cursor: pointer;
+    color: inherit;
+    transition: 0.2s;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+}
