@@ -77,18 +77,30 @@ background-image: url('/static/icon.png');
 .chat {
     flex: 1;
 }
+.dark-mode .chat{
+    background-color: #333;
+}
+#users {
+    border-radius: 10px;
+    overflow: hidden;
+}
 
 #users li {
     position: relative;
     cursor: pointer;
 
-    padding: 5px 5px 5px 30px; 
+    padding: 10px 10px 10px 35px;
+    transition: background-color 0.2s;
+
+    border: none;
+    background: white;
+    color: black;
 }
 
 #users li::before {
     content: "";
     position: absolute;
-    left: 5px;
+    left: 10px;
     top: 50%;
     transform: translateY(-50%);
 
@@ -101,11 +113,27 @@ background-image: url('/static/icon.png');
 }
 
 #users li:hover {
-    background: #eee;
+    background-color: #e9ecef;
 }
 
 #users li.selected {
-    background: lightblue;
+    background-color: #b6d4fe;
+}
+
+
+
+.dark-mode #users li {
+    background-color: #0F172A;
+    color: #F8FAFC;
+}
+
+.dark-mode #users li:hover {
+    background-color: #1E293B;
+}
+
+.dark-mode #users li.selected {
+    background-color: #2563EB;
+    color: white;
 }
 .chat-container {
     gap: 20px;
@@ -116,6 +144,12 @@ background-image: url('/static/icon.png');
 #messages {
     display: flex;
     flex-direction: column;
+    background-color: #F8FAFC;
+}
+.dark-mode #messages {
+    display: flex;
+    flex-direction: column;
+    background-color: #0C1120;
 }
 .dark-mode{
     background-color: #0C1120;
@@ -127,4 +161,36 @@ background-image: url('/static/icon.png');
 }
 .login-form.dark-mode h3 {
     color: #F8FAFC;
+}
+.message {
+    display: inline-block;
+    max-width: 60%;
+    padding: 10px 15px;
+    border-radius: 16px;
+    word-wrap: break-word;
+    margin-top: 5px;
+}
+
+.my-message {
+    background-color: #0d6efd;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+.other-message {
+    background-color: #e9ecef;
+    color: black;
+    border-bottom-left-radius: 5px;
+}
+.dark-mode .my-message {
+    background-color: #2563eb;
+    color: white;
+}
+
+.dark-mode .other-message {
+    background-color: #334155;
+    color: #F8FAFC;
+}
+#messages {
+    padding: 15px;
 }

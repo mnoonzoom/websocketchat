@@ -8,13 +8,26 @@ function addMessage(msg) {
 
     const isMe = msg.username === username;
 
-    div.className = "mb-2 " + (isMe ? "text-end" : "text-start");
+    if (isMe) {
+        div.className = "text-end mb-2";
+    } else {
+        div.className = "text-start mb-2";
+    }
 
-    div.innerHTML = `
-        <div class="d-inline-block p-2 rounded ${isMe ? 'bg-primary text-white' : 'bg-light'}">
-            <b>${msg.username}</b>: ${msg.message}
-        </div>
-    `;
+    const bubble = document.createElement("div");
+    bubble.classList.add("message");
+
+    if (isMe) {
+        bubble.classList.add("my-message");
+    } else {
+        bubble.classList.add("other-message");
+    }
+
+    bubble.innerHTML =
+        "<b>" + msg.username + "</b><br>" +
+        msg.message;
+
+    div.appendChild(bubble);
 
     document.getElementById("messages").appendChild(div);
 }
@@ -87,7 +100,22 @@ socket.onmessage = (event) => {
     }
 };
 
+function darkmode(){
+    var element1 = document.getElementById("navbar")
+    var element2 =document.getElementById("body")
+  var element4 =document.getElementById("chat")
+  var element5 =document.getElementById('register')
+    element2.classList.toggle("bg-light")
+    element2.classList.toggle("dark-mode")
+    element1.classList.toggle("bg-light");
+    element1.classList.toggle("dark-mode");
+    element1.classList.toggle("navbar-light")
+    element1.classList.toggle("navbar-dark")
+    element4.classList.toggle("darkmode")
+    element5.classList.toggle('darkmode')
 
+}
+document.getElementById("themes").addEventListener("click", darkmode)
 document.getElementById("send").onclick = () => {
     const message = document.getElementById("message").value;
 

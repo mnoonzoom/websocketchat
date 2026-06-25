@@ -5,13 +5,15 @@
 </head>
 <body id="body" class="bg-light text-dark">
    
-<nav class="navbar navbar-light bg-light">
+<nav id="navbar" class="navbar navbar-light bg-light">
     <div class="container-fluid">
         <span class="navbar-brand">Chat App</span>
     </div>
+        <button id="themes">button</button>
 </nav>
 
-<div class="container-fluid chat-container">
+
+<div id="chat" class="container-fluid chat-container">
     <div class="row h-100">
 
         <div class="col-md-3 border-end p-3 h-100 overflow-auto">
@@ -21,8 +23,7 @@
         <div class="col-md-9 d-flex flex-column h-100">
 
             <div id="messages"
-                 class="flex-grow-1 p-3 overflow-auto"
-                 style="background: #f8f9fa;">
+                 class="flex-grow-1 p-3 overflow-auto">
             </div>
 
             <div class="p-3 border-top">
