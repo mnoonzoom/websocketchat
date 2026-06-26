@@ -76,7 +76,11 @@ function loadMessages() {
     .catch(err => console.log(err));
 }
 function loadUsers() {
-    fetch("/users")
+    fetch("/users", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
         .then(r => r.json())
         .then(users => {
             const list = document.getElementById("users");

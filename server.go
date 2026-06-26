@@ -275,7 +275,17 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
+	token := r.Header.Get("Authorization")
 
+	if len(token) > 7 {
+		token = token[7:]
+	}
+
+	_, err := validateToken(token)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 	coll := client.Database("chat").Collection("auth")
 
 	cursor, err := coll.Find(context.TODO(), bson.D{})
