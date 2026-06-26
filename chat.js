@@ -1,8 +1,11 @@
 const username = localStorage.getItem("username");
 let currentChat = "all";
 
-let socket = new WebSocket("ws://localhost:8080/ws?username=" + username);
+const token = localStorage.getItem("token");
 
+let socket = new WebSocket(
+    "ws://localhost:8080/ws?token=" + token
+);
 function addMessage(msg) {
     const div = document.createElement("div");
 
@@ -47,13 +50,25 @@ function shouldShow(msg) {
 function loadMessages() {
     document.getElementById("messages").innerHTML = "";
 
-    fetch("/messages?username=" + username)
-        .then(r => r.json())
-        .then(messages => {
-            messages.forEach(msg => {
-                if (shouldShow(msg)) addMessage(msg);
-            });
+    fetch("/messages", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(r => {
+        if (!r.ok) {
+            throw new Error("Unauthorized");
+        }
+        return r.json();
+    })
+    .then(messages => {
+        messages.forEach(msg => {
+            if (shouldShow(msg)) {
+                addMessage(msg);
+            }
         });
+    })
+    .catch(err => console.log(err));
 }
 function loadUsers() {
     fetch("/users")

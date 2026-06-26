@@ -74,7 +74,13 @@ func checkPassword(hashedPassword, password string) bool {
 	return err == nil
 }
 func handleConnections(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
+	token := r.URL.Query().Get("token")
+
+	username, err := validateToken(token)
+	if err != nil {
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
 
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -115,8 +121,17 @@ func handleConnections(w http.ResponseWriter, r *http.Request) {
 	}
 }
 func getMessages(w http.ResponseWriter, r *http.Request) {
-	username := r.URL.Query().Get("username")
+	token := r.Header.Get("Authorization")
 
+	if len(token) > 7 {
+		token = token[7:]
+	}
+
+	username, err := validateToken(token)
+	if err != nil {
+		http.Error(w, "Unauthorized", 401)
+		return
+	}
 	filter := bson.M{
 		"$or": []bson.M{
 			{"recipient": ""},
@@ -271,6 +286,24 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
+}
+func validateToken(tokenString string) (string, error) {
+
+	claims := &Claims{}
+
+	token, err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return jwtKey, nil
+		},
+	)
+
+	if err != nil || !token.Valid {
+		return "", err
+	}
+
+	return claims.Username, nil
 }
 func main() {
 
