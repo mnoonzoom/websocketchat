@@ -19,7 +19,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var jwtKey = []byte(os.Getenv("JWT_SECRET"))
+var jwtKey []byte
 var client *mongo.Client
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -232,7 +232,10 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if ok {
-		token, _ := generateToken(req.Username)
+		token, err := generateToken(req.Username)
+
+		fmt.Println("ERROR:", err)
+
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"success": true,
 			"token":   token,
@@ -311,6 +314,7 @@ func main() {
 	if err2 != nil {
 		log.Fatalf("Error loading .env file: %s", err2)
 	}
+	jwtKey = []byte(os.Getenv("JWT_SECRET"))
 	fmt.Println(os.Getenv("MONGODB_URI"))
 	uri := dotenv.GetString("MONGODB_URI")
 	docs := "www.mongodb.com/docs/drivers/go/current/"

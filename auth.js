@@ -1,32 +1,27 @@
-async function Auth(){
-
-
+async function Auth() {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
     const res = await fetch("/login", {
-    method: "POST",
-    headers: {
-        "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-        username,
-        password
-    })
-})
-.then(r => r.json())
-.then(data => {
-    if (data.success) {
-        localStorage.setItem("token", data.token);
-        window.location = "/chat";
-    }
-});
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            username,
+            password
+        })
+    });
 
     const data = await res.json();
 
+    console.log(data);
+
     if (data.success) {
-        window.location.href = "/chat";
+        localStorage.setItem("token", data.token);
         localStorage.setItem("username", username);
+
+        window.location.href = "/chat";
     } else {
         alert("Wrong credentials");
     }
@@ -75,11 +70,7 @@ function darkmode(){
     }
 
 }
-const token = localStorage.getItem("token");
 
-let socket = new WebSocket(
-    "ws://localhost:8080/ws?token=" + token
-);
 document.getElementById("themes").addEventListener("click", darkmode)
  document.getElementById("login").addEventListener("click", Auth);
  document.getElementById("register").addEventListener("click", Register) 

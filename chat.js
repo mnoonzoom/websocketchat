@@ -3,9 +3,14 @@ let currentChat = "all";
 
 const token = localStorage.getItem("token");
 
+if (!token) {
+    window.location = "/";
+}
+
 let socket = new WebSocket(
-    "ws://localhost:8080/ws?token=" + token
+    "ws://localhost:8080/ws?token=" + encodeURIComponent(token)
 );
+
 function addMessage(msg) {
     const div = document.createElement("div");
 
