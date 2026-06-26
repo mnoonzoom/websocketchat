@@ -202,6 +202,15 @@ func auth(user string, password string) bool {
 func register(user string, password string) bool {
 
 	coll := client.Database("chat").Collection("auth")
+	err := coll.FindOne(
+		context.TODO(),
+		bson.M{"username": user},
+	).Err()
+
+	if err == nil {
+		fmt.Println("User already exists")
+		return false
+	}
 	hashedpass, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
 	if err != nil {
 		fmt.Println(err)
