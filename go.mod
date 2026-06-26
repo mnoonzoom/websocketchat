@@ -6,6 +6,7 @@ require github.com/gorilla/websocket v1.5.3
 
 require (
 	github.com/fatih/color v1.18.0 // indirect
+	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
 	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/klauspost/compress v1.17.6 // indirect
 	github.com/mattn/go-colorable v0.1.14 // indirect

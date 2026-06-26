@@ -9,6 +9,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/gorilla/websocket"
 	"github.com/joho/godotenv"
 	"github.com/sbowman/dotenv"
@@ -18,6 +19,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+var jwtKey = []byte(os.Getenv("JWT_SECRET"))
 var client *mongo.Client
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
@@ -41,10 +43,26 @@ type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }
+type Claims struct {
+	Username string `json:"username"`
+	jwt.RegisteredClaims
+}
 
 var clients = make(map[string]*websocket.Conn)
 var broadcast = make(chan Message)
 
+func generateToken(username string) (string, error) {
+	expirationTime := time.Now().Add(24 * time.Hour)
+	claims := &Claims{
+		Username: username,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	return token.SignedString(jwtKey)
+}
 func homePage(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "index.html")
 }
@@ -198,9 +216,18 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	ok := auth(req.Username, req.Password)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]bool{
-		"success": ok,
-	})
+	if ok {
+		token, _ := generateToken(req.Username)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": true,
+			"token":   token,
+		})
+	} else {
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"success": false,
+		})
+
+	}
 }
 func registerHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
