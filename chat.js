@@ -170,8 +170,11 @@ if (element2.classList.contains("dark-mode")) {
 
 }
 document.getElementById("themes").addEventListener("click", darkmode)
-document.getElementById("send").onclick = () => {
-    const message = document.getElementById("message").value;
+function sendMessage() {
+    const messageInput = document.getElementById("message");
+    const message = messageInput.value.trim();
+
+    if (message === "") return;
 
     socket.send(JSON.stringify({
         username,
@@ -179,8 +182,17 @@ document.getElementById("send").onclick = () => {
         message
     }));
 
-    document.getElementById("message").value = "";
-};
+    messageInput.value = "";
+}
+
+document.getElementById("send").onclick = sendMessage;
+
+document.getElementById("message").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        sendMessage();
+    }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
     loadUsers();
