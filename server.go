@@ -309,6 +309,16 @@ func getUsers(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(users)
 }
+func onlineUsers(w http.ResponseWriter, r *http.Request) {
+	var users []string
+
+	for user := range clients {
+		users = append(users, user)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(users)
+}
 func validateToken(tokenString string) (string, error) {
 
 	claims := &Claims{}
@@ -367,7 +377,7 @@ func main() {
 	})
 	http.HandleFunc("/messages", getMessages)
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("."))))
-
+	http.HandleFunc("/online", onlineUsers)
 	go handleMessages()
 
 	fmt.Println("Server starts on :8080")

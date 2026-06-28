@@ -1,5 +1,6 @@
 const username = localStorage.getItem("username");
 let currentChat = "all";
+let onlineUsers = [];
 
 const token = localStorage.getItem("token");
 
@@ -11,6 +12,18 @@ let socket = new WebSocket(
     "ws://localhost:8080/ws?token=" + encodeURIComponent(token)
 );
 
+function loadOnlineUsers(){
+    fetch("/online", {
+        headers: {
+            "Authorization": "Bearer " + token
+        }
+    })
+    .then(r => r.json())
+    .then(users =>{
+        onlineusers= users;
+        loadUsers();
+    });
+}
 function addMessage(msg) {
     const div = document.createElement("div");
 
@@ -93,7 +106,7 @@ function loadUsers() {
                 all.classList.add("selected");
             }
 
-            all.textContent = "All";
+        all.innerHTML = "💬 All";
 
             all.onclick = () => {
                 document.querySelectorAll("#users li").forEach(item => {
@@ -113,7 +126,10 @@ function loadUsers() {
 
                 const li = document.createElement("li");
                 li.className = "list-group-item";
-                li.textContent = u;
+            const isOnline = onlineUsers.includes(u);
+
+li.innerHTML =
+    (isOnline ? "🟢 " : "⚫ ") + u;
 
                 if (currentChat === u) {
                     li.classList.add("selected");
@@ -195,6 +211,8 @@ document.getElementById("message").addEventListener("keydown", (e) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadUsers();
+    loadOnlineUsers();
     loadMessages();
+
+    setInterval(loadOnlineUsers, 3000);
 });
